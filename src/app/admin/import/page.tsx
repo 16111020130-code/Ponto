@@ -32,7 +32,7 @@ export default function ExcelImportPage() {
       const worksheet = workbook.Sheets[sheetName];
       
       // Expected columns: Data, Nome, Entrada, Justificativa, Saída
-      const json: any[] = XLSX.utils.sheet_to_json(worksheet);
+      const json: Record<string, unknown>[] = XLSX.utils.sheet_to_json(worksheet);
 
       // Aqui faríamos o mapeamento real para inserir via API/Server Action
       // Como exemplo, simulando um log do json parseado
