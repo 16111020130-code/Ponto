@@ -134,3 +134,31 @@ export async function changeUserPassword(userId: string, newPassword: string) {
   
   return { success: true };
 }
+
+export async function adminRegisterPunch(data: { userId: string, punch_time: string, punch_type: string, justification?: string }) {
+  await checkAdmin();
+  
+  const { userId, punch_time, punch_type, justification } = data;
+  
+  const { error } = await supabase
+    .from('time_records')
+    .insert([
+      {
+        user_id: userId,
+        punch_time: punch_time, // ISO String provided from frontend
+        punch_type: punch_type,
+        justification: justification || null,
+        source: 'admin_manual'
+      }
+    ]);
+
+  if (error) {
+    console.error("Erro ao registrar ponto como admin:", error);
+    throw new Error("Erro ao registrar ponto manualmente.");
+  }
+
+  // Not revalidating the whole page to avoid closing modals if we rely on local state, but usually revalidatePath('/admin/users') is fine.
+  // We'll let the client refetch history or handle it.
+  return { success: true };
+}
+

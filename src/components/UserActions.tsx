@@ -6,7 +6,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Clock, Key, Trash2 } from "lucide-react";
-import { changeUserPassword, fetchUserRecords, deleteTimeRecord } from "@/app/admin-actions";
+import { changeUserPassword, fetchUserRecords, deleteTimeRecord, adminRegisterPunch } from "@/app/admin-actions";
 
 interface UserActionsProps {
   userId: string;
@@ -18,6 +18,44 @@ export function UserActions({ userId, userName }: UserActionsProps) {
   const [loadingPwd, setLoadingPwd] = useState(false);
   const [records, setRecords] = useState<{id: string; punch_time: string; punch_type: string; source: string}[]>([]);
   const [loadingRecords, setLoadingRecords] = useState(false);
+
+  // Estados para lançamento de ponto manual
+  const [manualDate, setManualDate] = useState("");
+  const [manualTime, setManualTime] = useState("");
+  const [manualType, setManualType] = useState("entrada");
+  const [manualJustification, setManualJustification] = useState("");
+  const [loadingManual, setLoadingManual] = useState(false);
+  const [openManualDialog, setOpenManualDialog] = useState(false);
+
+  const handleManualPunchSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!manualDate || !manualTime) return alert("Preencha data e hora!");
+
+    setLoadingManual(true);
+    try {
+      // Combinar data e hora e converter para UTC
+      const localDateTime = new Date(`${manualDate}T${manualTime}:00`);
+      
+      await adminRegisterPunch({
+        userId,
+        punch_time: localDateTime.toISOString(),
+        punch_type: manualType,
+        justification: manualJustification
+      });
+
+      alert("Ponto lançado com sucesso!");
+      setOpenManualDialog(false);
+      // Limpar form
+      setManualDate("");
+      setManualTime("");
+      setManualType("entrada");
+      setManualJustification("");
+    } catch (err: unknown) {
+      alert((err as Error).message);
+    } finally {
+      setLoadingManual(false);
+    }
+  };
 
   const handlePasswordSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -99,7 +137,7 @@ export function UserActions({ userId, userName }: UserActionsProps) {
                         )}
                       </td>
                       <td className="px-4 py-3 text-zinc-400 text-xs">
-                        {r.source === 'manual' ? 'Web' : 'Importação Excel'}
+                        {r.source === 'manual' ? 'Web' : r.source === 'admin_manual' ? 'Lançamento Manual (Admin)' : 'Importação Excel'}
                       </td>
                       <td className="px-4 py-3 text-right">
                         <button 
@@ -143,6 +181,72 @@ export function UserActions({ userId, userName }: UserActionsProps) {
             </div>
             <Button type="submit" disabled={loadingPwd} className="w-full bg-emerald-600 hover:bg-emerald-700">
               {loadingPwd ? "Salvando..." : "Atualizar Senha"}
+            </Button>
+          </form>
+        </DialogContent>
+      </Dialog>
+      {/* Botão de Lançar Ponto */}
+      <Dialog open={openManualDialog} onOpenChange={setOpenManualDialog}>
+        <DialogTrigger className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors hover:bg-zinc-800 text-zinc-400 hover:text-zinc-100 h-8 px-2">
+          <Clock className="w-4 h-4 mr-2 text-amber-500" />
+          <span className="text-amber-500 font-medium">+ Ponto</span>
+        </DialogTrigger>
+        <DialogContent className="bg-zinc-950 border-zinc-800 text-zinc-100 sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Lançar Ponto: {userName}</DialogTitle>
+          </DialogHeader>
+          <form onSubmit={handleManualPunchSubmit} className="space-y-4 mt-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label>Data</Label>
+                <Input 
+                  type="date" 
+                  value={manualDate}
+                  onChange={e => setManualDate(e.target.value)}
+                  className="bg-zinc-900 border-zinc-700" 
+                  required 
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>Hora</Label>
+                <Input 
+                  type="time" 
+                  value={manualTime}
+                  onChange={e => setManualTime(e.target.value)}
+                  className="bg-zinc-900 border-zinc-700" 
+                  required 
+                />
+              </div>
+            </div>
+            
+            <div className="space-y-2">
+              <Label>Tipo de Batida</Label>
+              <select 
+                value={manualType}
+                onChange={e => setManualType(e.target.value)}
+                className="flex h-10 w-full rounded-md border border-zinc-700 bg-zinc-900 px-3 py-2 text-sm text-zinc-100 focus:outline-none focus:ring-2 focus:ring-zinc-400 focus:border-transparent"
+                required
+              >
+                <option value="entrada">Entrada</option>
+                <option value="saida_almoco">Saída p/ Almoço</option>
+                <option value="volta_almoco">Volta do Almoço</option>
+                <option value="saida">Saída Final</option>
+              </select>
+            </div>
+
+            <div className="space-y-2">
+              <Label>Justificativa (Opcional)</Label>
+              <Input 
+                type="text" 
+                value={manualJustification}
+                onChange={e => setManualJustification(e.target.value)}
+                className="bg-zinc-900 border-zinc-700" 
+                placeholder="Ex: Esqueceu de bater ao chegar" 
+              />
+            </div>
+
+            <Button type="submit" disabled={loadingManual} className="w-full bg-amber-600 hover:bg-amber-700 text-white">
+              {loadingManual ? "Salvando..." : "Registrar Ponto Manual"}
             </Button>
           </form>
         </DialogContent>
