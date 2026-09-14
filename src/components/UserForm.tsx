@@ -74,7 +74,7 @@ export function UserForm({ shifts }: UserFormProps) {
 
       <div className="space-y-2">
         <Label>Perfil de Acesso</Label>
-        <Select onValueChange={(v: "admin" | "employee") => setValue("role", v)} defaultValue="employee">
+        <Select onValueChange={(v) => setValue("role", (v as "admin" | "employee") || "employee")} defaultValue="employee">
           <SelectTrigger className="bg-zinc-900 border-zinc-700">
             <SelectValue placeholder="Selecione o perfil" />
           </SelectTrigger>
@@ -88,7 +88,7 @@ export function UserForm({ shifts }: UserFormProps) {
       {role === "employee" && (
         <div className="space-y-2">
           <Label>Escala de Trabalho</Label>
-          <Select onValueChange={(v) => setValue("shift_id", v)}>
+          <Select onValueChange={(v) => setValue("shift_id", v as string)}>
             <SelectTrigger className="bg-zinc-900 border-zinc-700">
               <SelectValue placeholder="Selecione a escala" />
             </SelectTrigger>

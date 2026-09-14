@@ -63,7 +63,8 @@ export default async function AdminUsersPage() {
                     </td>
                   </tr>
                 ) : (
-                  users.map((user: { id: string; name: string; email: string; role: string; active: boolean; shifts?: { name: string } }) => (
+                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                  users.map((user: any) => (
                     <tr key={user.id} className="border-b border-zinc-800/50 hover:bg-zinc-800/20">
                       <td className="px-6 py-4 font-medium text-zinc-200">{user.name}</td>
                       <td className="px-6 py-4 text-zinc-400">{user.email}</td>
