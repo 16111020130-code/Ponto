@@ -95,7 +95,7 @@ export async function fetchUserRecords(userId: string) {
     .from('time_records')
     .select('*')
     .eq('user_id', userId)
-    .order('timestamp', { ascending: false });
+    .order('punch_time', { ascending: false });
 
   if (error) {
     console.error("Erro ao buscar histórico:", error);
