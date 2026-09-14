@@ -1,7 +1,8 @@
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 import { redirect } from "next/navigation";
-import { Clock, LogOut } from "lucide-react";
+import { Clock } from "lucide-react";
+import { LogoutButton } from "@/components/LogoutButton";
 
 export default async function DashboardLayout({
   children,
@@ -43,14 +44,7 @@ export default async function DashboardLayout({
               <p className="text-zinc-100 font-medium">{session.user?.name}</p>
               <p className="text-zinc-400 text-xs">{session.user?.role === 'admin' ? 'Administrador' : 'Funcionário'}</p>
             </div>
-            {/* O SignOut vai num client component ou form, mas simplificaremos no href de api */}
-            <a 
-              href="/api/auth/signout" 
-              className="p-2 text-zinc-400 hover:text-zinc-100 hover:bg-zinc-800 rounded-full transition-colors"
-              title="Sair"
-            >
-              <LogOut className="w-5 h-5" />
-            </a>
+            <LogoutButton />
           </div>
         </div>
       </header>
