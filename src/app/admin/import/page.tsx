@@ -5,7 +5,6 @@ import * as XLSX from "xlsx";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { UploadCloud, Check, AlertTriangle } from "lucide-react";
-import { supabase } from "@/lib/supabase"; // Cuidado: No client side, isso precisa ter RLS apropriado ou ser feito via server action
 
 export default function ExcelImportPage() {
   const [file, setFile] = useState<File | null>(null);
@@ -14,8 +13,9 @@ export default function ExcelImportPage() {
   const [error, setError] = useState("");
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files.length > 0) {
-      setFile(e.target.files[0]);
+    const uploadedFile = e.target.files?.[0];
+    if (uploadedFile) {
+      setFile(uploadedFile);
     }
   };
 

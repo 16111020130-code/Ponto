@@ -20,7 +20,7 @@ export async function registerPunch(type: 'entrada' | 'saida' | 'saida_almoco' |
     return { success: true };
   }
 
-  const { data, error } = await supabase
+  const { error } = await supabase
     .from('time_records')
     .insert([
       {

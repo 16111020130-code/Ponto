@@ -44,7 +44,7 @@ export async function fetchShifts() {
   return data;
 }
 
-export async function createUser(data: any) {
+export async function createUser(data: { name: string; email: string; password?: string; role: string; shift_id?: string }) {
   await checkAdmin();
   
   const { name, email, password, role, shift_id } = data;

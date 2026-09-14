@@ -16,8 +16,7 @@ interface UserActionsProps {
 export function UserActions({ userId, userName }: UserActionsProps) {
   const [newPassword, setNewPassword] = useState("");
   const [loadingPwd, setLoadingPwd] = useState(false);
-  
-  const [records, setRecords] = useState<any[]>([]);
+  const [records, setRecords] = useState<{id: string; timestamp: string; type: string; source: string}[]>([]);
   const [loadingRecords, setLoadingRecords] = useState(false);
 
   const handlePasswordSubmit = async (e: React.FormEvent) => {
@@ -29,8 +28,8 @@ export function UserActions({ userId, userName }: UserActionsProps) {
       await changeUserPassword(userId, newPassword);
       alert("Senha alterada com sucesso!");
       setNewPassword("");
-    } catch (err: any) {
-      alert(err.message);
+    } catch (err: unknown) {
+      alert((err as Error).message);
     } finally {
       setLoadingPwd(false);
     }
@@ -54,8 +53,8 @@ export function UserActions({ userId, userName }: UserActionsProps) {
     try {
       await deleteTimeRecord(recordId);
       setRecords(prev => prev.filter(r => r.id !== recordId));
-    } catch (err: any) {
-      alert(err.message);
+    } catch (err: unknown) {
+      alert((err as Error).message);
     }
   };
 

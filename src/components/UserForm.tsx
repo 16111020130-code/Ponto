@@ -21,7 +21,7 @@ const userSchema = z.object({
 type UserFormValues = z.infer<typeof userSchema>;
 
 interface UserFormProps {
-  shifts: any[];
+  shifts: { id: string; name: string }[];
 }
 
 export function UserForm({ shifts }: UserFormProps) {
@@ -43,8 +43,8 @@ export function UserForm({ shifts }: UserFormProps) {
     try {
       await createUser(data);
       window.location.reload();
-    } catch (err: any) {
-      setError(err.message || "Erro desconhecido");
+    } catch (err: unknown) {
+      setError((err as Error).message || "Erro desconhecido");
     } finally {
       setLoading(false);
     }
@@ -74,7 +74,7 @@ export function UserForm({ shifts }: UserFormProps) {
 
       <div className="space-y-2">
         <Label>Perfil de Acesso</Label>
-        <Select onValueChange={(v: any) => setValue("role", v)} defaultValue="employee">
+        <Select onValueChange={(v: "admin" | "employee") => setValue("role", v)} defaultValue="employee">
           <SelectTrigger className="bg-zinc-900 border-zinc-700">
             <SelectValue placeholder="Selecione o perfil" />
           </SelectTrigger>

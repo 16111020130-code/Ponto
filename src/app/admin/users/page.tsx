@@ -1,11 +1,10 @@
 import { fetchUsers, fetchShifts, toggleUserStatus } from "@/app/admin-actions";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { UserForm } from "@/components/UserForm";
 import { UserActions } from "@/components/UserActions";
 import { UserPlus, UserX, CheckCircle } from "lucide-react";
-import { revalidatePath } from "next/cache";
 
 export default async function AdminUsersPage() {
   const users = await fetchUsers();
@@ -17,8 +16,6 @@ export default async function AdminUsersPage() {
     const id = formData.get("id") as string;
     const active = formData.get("active") === "true";
     
-    // Precisaria importar a action localmente, mas podemos fazer direto
-    const { toggleUserStatus } = await import("@/app/admin-actions");
     await toggleUserStatus(id, active);
   };
 
@@ -66,7 +63,7 @@ export default async function AdminUsersPage() {
                     </td>
                   </tr>
                 ) : (
-                  users.map((user: any) => (
+                  users.map((user: { id: string; name: string; email: string; role: string; active: boolean; shifts?: { name: string } }) => (
                     <tr key={user.id} className="border-b border-zinc-800/50 hover:bg-zinc-800/20">
                       <td className="px-6 py-4 font-medium text-zinc-200">{user.name}</td>
                       <td className="px-6 py-4 text-zinc-400">{user.email}</td>

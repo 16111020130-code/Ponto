@@ -2,14 +2,14 @@
 
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { LogIn, LogOut, CheckCircle2 } from "lucide-react";
 import { registerPunch, fetchTodayRecords } from "@/app/actions";
 
 export default function DashboardPage() {
   const [currentTime, setCurrentTime] = useState<Date | null>(null);
   const [loadingAction, setLoadingAction] = useState(false);
-  const [records, setRecords] = useState<any[]>([]);
+  const [records, setRecords] = useState<{id: string; punch_type: string; source: string; punch_time: string}[]>([]);
 
   useEffect(() => {
     setCurrentTime(new Date());
@@ -28,8 +28,8 @@ export default function DashboardPage() {
       await registerPunch(type);
       alert(`Registrado com sucesso!`);
       window.location.reload();
-    } catch (error: any) {
-      alert("Erro ao registrar: " + error.message);
+    } catch (error: unknown) {
+      alert("Erro ao registrar: " + (error as Error).message);
     } finally {
       setLoadingAction(false);
     }
