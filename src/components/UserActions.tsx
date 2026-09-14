@@ -16,7 +16,7 @@ interface UserActionsProps {
 export function UserActions({ userId, userName }: UserActionsProps) {
   const [newPassword, setNewPassword] = useState("");
   const [loadingPwd, setLoadingPwd] = useState(false);
-  const [records, setRecords] = useState<{id: string; timestamp: string; type: string; source: string}[]>([]);
+  const [records, setRecords] = useState<{id: string; punch_time: string; punch_type: string; source: string}[]>([]);
   const [loadingRecords, setLoadingRecords] = useState(false);
 
   const handlePasswordSubmit = async (e: React.FormEvent) => {
@@ -86,20 +86,20 @@ export function UserActions({ userId, userName }: UserActionsProps) {
                   </tr>
                 </thead>
                 <tbody>
-                  {records.map(r => (
+                  {records.map((r) => (
                     <tr key={r.id} className="border-b border-zinc-800/50 hover:bg-zinc-900/50">
                       <td className="px-4 py-3 text-zinc-200">
-                        {new Date(r.timestamp).toLocaleString('pt-BR')}
+                        {new Date(r.punch_time).toLocaleString('pt-BR')}
                       </td>
                       <td className="px-4 py-3">
-                        {r.type === 'entrada' ? (
-                          <span className="text-emerald-400 bg-emerald-500/10 px-2 py-1 rounded-full text-xs">Entrada</span>
+                        {r.punch_type.includes('entrada') || r.punch_type.includes('volta') ? (
+                          <span className="text-emerald-400 bg-emerald-500/10 px-2 py-1 rounded-full text-xs capitalize">{r.punch_type.replace('_', ' ')}</span>
                         ) : (
-                          <span className="text-amber-400 bg-amber-500/10 px-2 py-1 rounded-full text-xs">Saída</span>
+                          <span className="text-amber-400 bg-amber-500/10 px-2 py-1 rounded-full text-xs capitalize">{r.punch_type.replace('_', ' ')}</span>
                         )}
                       </td>
                       <td className="px-4 py-3 text-zinc-400 text-xs">
-                        {r.source === 'web' ? 'Web' : 'Importação Excel'}
+                        {r.source === 'manual' ? 'Web' : 'Importação Excel'}
                       </td>
                       <td className="px-4 py-3 text-right">
                         <button 

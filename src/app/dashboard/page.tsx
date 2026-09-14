@@ -126,7 +126,7 @@ export default function DashboardPage() {
                     </div>
                     <div>
                       <p className="text-zinc-100 font-medium">{getPunchLabel(r.punch_type)}</p>
-                      <p className="text-zinc-400 text-sm">Via {r.source === 'web' ? 'Web' : 'Importação'}</p>
+                      <p className="text-zinc-400 text-sm">Via {r.source === 'manual' ? 'Web' : 'Importação'}</p>
                     </div>
                   </div>
                   <div className="text-right">
